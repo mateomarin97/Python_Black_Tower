@@ -19,14 +19,18 @@ def create(request: schemas.Blog, db: Session, user_id: int):
     db.refresh(new_blog)
     return new_blog
 
-def delete(id: int, db: Session):
+def delete(id: int, db: Session, user_id: int):
     blog = get(id, db)
+    if blog.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this blog")
     db.delete(blog)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-def update(id: int, request: schemas.Blog, db: Session):
+def update(id: int, request: schemas.Blog, db: Session, user_id: int):
     blog = get(id, db)
+    if blog.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this blog")
     blog.title = request.title
     blog.body = request.body
     db.commit()
