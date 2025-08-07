@@ -12,8 +12,8 @@ def get(id: int, db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog not found")
     return blog
 
-def create(request: schemas.Blog, db: Session):
-    new_blog = models.Blog(title=request.title, body=request.body, user_id=1) 
+def create(request: schemas.Blog, db: Session, user_id: int):
+    new_blog = models.Blog(title=request.title, body=request.body, user_id=user_id)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
